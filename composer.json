@@ -1,0 +1,15 @@
+{
+    "name": "arduino_pc2lcd",
+    "description": "PC to LCD",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Andchir",
+            "email": "andchir@gmail.com"
+        }
+    ],
+    "autoload": {
+        "classmap": [ "classes/" ]
+    },
+    "require": {}
+}
