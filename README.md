@@ -26,3 +26,9 @@ echo "Hello Arduino" > /dev/ttyACM0
 
 Additional information: [http://playground.arduino.cc/Interfacing/LinuxTTY](http://playground.arduino.cc/Interfacing/LinuxTTY)
 
+Run application:
+~~~
+cd /var/www/html/arduino_pc2lcd
+php -f index.php
+~~~
+
