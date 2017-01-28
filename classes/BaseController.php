@@ -22,6 +22,7 @@ class BaseController
             'lcd_chars' => 16,
             'lcd_rows' => 2,
             'str_separator' => '--',
+            'switch_delay' => 10,
             'max_log_size' => 5 * 1024,
             'logging' => false
         ], $config);
@@ -38,11 +39,14 @@ class BaseController
 
         $data = file_get_contents( $this->config['base_path'] . '/action/data.json' );
         $data = json_decode( $data, true );
-        $actionNamesArr = array();
         $actionIndex = 0;
-        foreach ( $data['actions'] as $index => $row ){
-            array_push( $actionNamesArr, $row['name'] );
-        }
+
+        $data['actions'] = array_values(array_filter($data['actions'], function($inp){
+            return $inp['active'];
+        }));
+
+        //Update config
+        $this->config = array_merge( $this->config, $this->arrayAvoidKeys( $data, array('actions', '') ) );
 
         $cmdAction = count( $arg ) >= 3
             ? trim( $arg[1] )
@@ -51,18 +55,14 @@ class BaseController
         switch ( $cmdAction ){
             case 'print'://Print action output
 
-                if( in_array( $arg[2], $actionNamesArr ) ){
-                    $output = $this->getActionOutput( $arg[2] );
-                    echo $output;
-                    exit;
-                }
+                $output = $this->getActionOutput( $arg[2] );
+                echo $output;
+                exit;
 
                 break;
             case 'print_lcd'://Print action output on LCD
 
-                if( in_array( $arg[2], $actionNamesArr ) ){
-                    return $this->printOnceOnLCD( $arg[2] );
-                }
+                return $this->printOnceOnLCD( $arg[2] );
 
                 break;
             case 'index'://Set action index
@@ -101,10 +101,20 @@ class BaseController
         if( $fp === false ){
             return;
         }
+        $startTime = time();
+        $switchTime = $this->config['switch_delay'];
         while (1) {
-            $output = $this->getActionOutput( $data['actions'][$actionStartIndex]['name'] );
-            fwrite($fp, $this->lcdStringNormalize( $output ));
-            sleep(2);
+            $currentTime = time() - $startTime;
+            if( $currentTime >= $switchTime ){
+                $actionStartIndex++;
+                if( !isset( $data['actions'][ $actionStartIndex ] ) ){
+                    $actionStartIndex = 0;
+                }
+                $switchTime += $this->config['switch_delay'];
+            }
+            $output = $this->getActionOutput( $data['actions'][ $actionStartIndex ]['name'] );
+            fwrite( $fp, $this->lcdStringNormalize( $output ) );
+            sleep( $data['actions'][ $actionStartIndex ]['refresh_time'] );
         }
         fclose($fp);
     }
@@ -117,6 +127,9 @@ class BaseController
     public function printOnceOnLCD( $actionName )
     {
         $output = $this->getActionOutput( $actionName );
+        if( !$output ){
+            return false;
+        }
         $fp = fopen($this->config['tty_address'], 'w+');
         if( $fp === false ){
             return false;
@@ -176,6 +189,16 @@ class BaseController
         else {
             return trim( substr( $string, strpos( $string, $separator ) + 1 ) );
         }
+    }
+
+    /**
+     * @param $arr
+     * @param $badKeys
+     * @return mixed
+     */
+    public function arrayAvoidKeys( $arr, $badKeys )
+    {
+        return array_diff_key($arr, array_flip($badKeys));
     }
 
 }

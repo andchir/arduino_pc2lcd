@@ -1,5 +1,5 @@
 {
-    "delay": 10,
+    "switch_delay": 10,
     "actions": [
         {
             "name": "ram",
