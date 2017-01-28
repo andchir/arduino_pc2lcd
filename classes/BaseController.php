@@ -2,7 +2,7 @@
 
 /**
  * BaseController
- * @version 1.0.0
+ * @version 1.0.1
  * @author Andchir<andchir@gmail.com>
  */
 
@@ -28,16 +28,22 @@ class BaseController
 
     }
 
+    /**
+     * Run application
+     * @param $arg
+     */
     public function run( $arg )
     {
 
         $data = file_get_contents( $this->config['base_path'] . '/action/data.json' );
         $data = json_decode( $data, true );
         $actionNamesArr = array();
+        $actionIndex = 0;
         foreach ( $data['actions'] as $index => $row ){
             array_push( $actionNamesArr, $row['name'] );
         }
 
+        //Print action output
         if( count( $arg ) >= 3 && $arg[1] == 'run' ){
             if( in_array( $arg[2], $actionNamesArr ) ){
                 $output = $this->getActionOutput( $arg[2] );
@@ -46,12 +52,19 @@ class BaseController
             }
         }
 
-        $this->printOnLCD( $data );
+        //Set action index
+        if( count( $arg ) >= 3 && $arg[1] == 'index' ){
+            $actionIndex = is_numeric( $arg[2] )
+                ? intval( $arg[2] )
+                : 0;
+        }
+
+        $this->printOnLCD( $data, $actionIndex );
     }
 
     /**
      * Get action output content
-     * @param $actionName
+     * @param string $actionName
      * @return string
      */
     public function getActionOutput( $actionName )
@@ -63,15 +76,17 @@ class BaseController
 
     /**
      * Print on LCD
+     * @param array $data
+     * @param int $actionStartIndex
      */
-    public function printOnLCD( $data )
+    public function printOnLCD( $data, $actionStartIndex = 0 )
     {
         $fp = fopen($this->config['tty_address'], 'w+');
         if( $fp === false){
             return;
         }
         while (1) {
-            $output = $this->getActionOutput( $data[0]['name'] );
+            $output = $this->getActionOutput( $data['actions'][$actionStartIndex]['name'] );
             fwrite($fp, $this->lcdStringNormalize( $output ));
             sleep(2);
         }
