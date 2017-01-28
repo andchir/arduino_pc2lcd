@@ -81,6 +81,7 @@ class BaseController
      */
     public function getActionOutput( $actionName )
     {
+        $controller = &$this;
         return file_exists( $this->config['base_path'] . "/action/{$actionName}/action.php" )
             ? include $this->config['base_path'] . "/action/{$actionName}/action.php"
             : '';
@@ -129,6 +130,22 @@ class BaseController
         $percent = round( $percent );
 
 
+    }
+
+    /**
+     * Get substring
+     * @param $string
+     * @param $separator
+     * @param bool $before
+     * @return mixed
+     */
+    public function getSubstring( $string, $separator, $before = true ){
+        if( $before ){
+            return trim( substr( $string, 0, strpos( $string, $separator ) ) );
+        }
+        else {
+            return trim( substr( $string, strpos( $string, $separator ) + 1 ) );
+        }
     }
 
 }
