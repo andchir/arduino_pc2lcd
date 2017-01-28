@@ -26,9 +26,18 @@ echo "Hello Arduino" > /dev/ttyACM0
 
 Additional information: [http://playground.arduino.cc/Interfacing/LinuxTTY](http://playground.arduino.cc/Interfacing/LinuxTTY)
 
-Run application:
+Run application. Print action output to LCD and auto switch:
 ~~~
 cd /var/www/html/arduino_pc2lcd
 php -f index.php
 ~~~
 
+Print action output to CLI:
+~~~
+php -f index.php print <action_name>
+~~~
+
+Print action output to LCD once:
+~~~
+php -f index.php print_lcd <action_name>
+~~~

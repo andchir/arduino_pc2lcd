@@ -57,7 +57,7 @@ class BaseController
             case 'print'://Print action output
 
                 $output = $this->getActionOutput( $arg[2] );
-                echo $output;
+                echo $output . PHP_EOL;
                 exit;
 
                 break;
