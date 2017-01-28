@@ -1,4 +1,4 @@
-Arduino PC to LCD (beta)
+Arduino PC to LCD
 =================
 
 Data output from the computer to the LCD screen. In the current version the only supported Linux server.
