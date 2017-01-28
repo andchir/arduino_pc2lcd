@@ -3,6 +3,8 @@ Arduino PC to LCD (beta)
 
 Data output from the computer to the LCD screen. In the current version the only supported Linux server.
 
+![Arduino PC to LCD](https://raw.githubusercontent.com/andchir/arduino_pc2lcd/master/img/pc2lcd001-sm.jpg)
+
 To find the address of the Arduino:
 ~~~
 ls /dev/tty*
