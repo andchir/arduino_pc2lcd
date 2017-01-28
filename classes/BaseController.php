@@ -43,21 +43,33 @@ class BaseController
             array_push( $actionNamesArr, $row['name'] );
         }
 
-        //Print action output
-        if( count( $arg ) >= 3 && $arg[1] == 'run' ){
-            if( in_array( $arg[2], $actionNamesArr ) ){
-                $output = $this->getActionOutput( $arg[2] );
-                echo $output;
-                exit;
-            }
+        $cmdAction = count( $arg ) >= 3
+            ? trim( $arg[1] )
+            : '';
+
+        switch ( $cmdAction ){
+            case 'run'://Print action output
+
+                if( in_array( $arg[2], $actionNamesArr ) ){
+                    $output = $this->getActionOutput( $arg[2] );
+                    echo $output;
+                    exit;
+                }
+
+                break;
+            case 'index'://Set action index
+
+                $actionIndex = is_numeric( $arg[2] )
+                    ? intval( $arg[2] )
+                    : 0;
+
+                break;
         }
 
-        //Set action index
-        if( count( $arg ) >= 3 && $arg[1] == 'index' ){
-            $actionIndex = is_numeric( $arg[2] )
-                ? intval( $arg[2] )
-                : 0;
+        if( count( $arg ) >= 3 && $arg[1] == 'run' ){
+
         }
+
 
         $this->printOnLCD( $data, $actionIndex );
     }
