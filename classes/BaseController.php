@@ -24,6 +24,7 @@ class BaseController
             'str_separator' => '--',
             'switch_delay' => 10,
             'max_log_size' => 5 * 1024,
+            'debug' => false,
             'logging' => false
         ], $config);
 
@@ -105,12 +106,15 @@ class BaseController
         $switchTime = $this->config['switch_delay'];
         while (1) {
             $currentTime = time() - $startTime;
-            if( $currentTime >= $switchTime ){
+            if( $switchTime <= $currentTime ){
                 $actionStartIndex++;
                 if( !isset( $data['actions'][ $actionStartIndex ] ) ){
                     $actionStartIndex = 0;
                 }
                 $switchTime += $this->config['switch_delay'];
+            }
+            if( $this->config['debug'] ){
+                echo "$currentTime $switchTime $actionStartIndex \n";
             }
             $output = $this->getActionOutput( $data['actions'][ $actionStartIndex ]['name'] );
             fwrite( $fp, $this->lcdStringNormalize( $output ) );
