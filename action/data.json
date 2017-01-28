@@ -1,15 +1,20 @@
 {
-  "delay": 10,
-  "actions": [
-    {
-      "name": "ram",
-      "active": true,
-      "refresh_time": 3
-    },
-    {
-      "name": "uptime",
-      "active": true,
-      "refresh_time": 3
-    }
-  ]
+    "delay": 10,
+    "actions": [
+        {
+            "name": "ram",
+            "active": true,
+            "refresh_time": 3
+        },
+        {
+            "name": "hdd",
+            "active": true,
+            "refresh_time": 3
+        },
+        {
+            "name": "uptime",
+            "active": true,
+            "refresh_time": 3
+        }
+    ]
 }

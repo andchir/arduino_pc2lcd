@@ -31,6 +31,7 @@ class BaseController
     /**
      * Run application
      * @param $arg
+     * @return bool|void
      */
     public function run( $arg )
     {
@@ -48,12 +49,19 @@ class BaseController
             : '';
 
         switch ( $cmdAction ){
-            case 'run'://Print action output
+            case 'print'://Print action output
 
                 if( in_array( $arg[2], $actionNamesArr ) ){
                     $output = $this->getActionOutput( $arg[2] );
                     echo $output;
                     exit;
+                }
+
+                break;
+            case 'print_lcd'://Print action output on LCD
+
+                if( in_array( $arg[2], $actionNamesArr ) ){
+                    return $this->printOnceOnLCD( $arg[2] );
                 }
 
                 break;
@@ -65,11 +73,6 @@ class BaseController
 
                 break;
         }
-
-        if( count( $arg ) >= 3 && $arg[1] == 'run' ){
-
-        }
-
 
         $this->printOnLCD( $data, $actionIndex );
     }
@@ -95,7 +98,7 @@ class BaseController
     public function printOnLCD( $data, $actionStartIndex = 0 )
     {
         $fp = fopen($this->config['tty_address'], 'w+');
-        if( $fp === false){
+        if( $fp === false ){
             return;
         }
         while (1) {
@@ -104,6 +107,23 @@ class BaseController
             sleep(2);
         }
         fclose($fp);
+    }
+
+    /**
+     * Print once on LCD
+     * @param $actionName
+     * @return bool
+     */
+    public function printOnceOnLCD( $actionName )
+    {
+        $output = $this->getActionOutput( $actionName );
+        $fp = fopen($this->config['tty_address'], 'w+');
+        if( $fp === false ){
+            return false;
+        }
+        fwrite($fp, $this->lcdStringNormalize( $output ));
+        fclose($fp);
+        return true;
     }
 
     /**
@@ -120,16 +140,26 @@ class BaseController
         return implode( $this->config['str_separator'], $out );
     }
 
-    public function getDiskUsage()
-    {
-
-        $disk_free_space = disk_free_space('/');
-        $disk_total_space = disk_total_space('/');
-
-        $percent = 100 - (100 * ( $disk_free_space / $disk_total_space ));
-        $percent = round( $percent );
-
-
+    /**
+     * @param $bytes
+     * @param string $unit
+     * @param int $decimals
+     * @return string
+     */
+    public function sizeFormat($bytes, $unit = "", $decimals = 2) {
+        $units = array('B' => 0, 'KB' => 1, 'MB' => 2, 'GB' => 3, 'TB' => 4, 'PB' => 5, 'EB' => 6, 'ZB' => 7, 'YB' => 8);
+        $value = 0;
+        if ($bytes > 0) {
+            if (!array_key_exists($unit, $units)) {
+                $pow = floor(log($bytes)/log(1024));
+                $unit = array_search($pow, $units);
+            }
+            $value = ($bytes/pow(1024,floor($units[$unit])));
+        }
+        if (!is_numeric($decimals) || $decimals < 0) {
+            $decimals = 2;
+        }
+        return sprintf('%.' . $decimals . 'f '.$unit, $value);
     }
 
     /**

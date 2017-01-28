@@ -20,7 +20,7 @@ $string = preg_replace( '/[^\d\s\,\.]/', '', $string );
 $string = trim( substr( $string, 0, strrpos( $string, ', ' ) ) );
 $string = preg_replace( '/\s{2,}/', ' ', $string );
 
-$output .= '--' . $controller->getSubstring( $string, ',' );
+$output .= $separator . $controller->getSubstring( $string, ',' );
 $output .= ' / ' . $controller->getSubstring( $string, ',', false );
 
 return $output;
