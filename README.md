@@ -43,3 +43,10 @@ Print action output to LCD once:
 ~~~
 php -f index.php print_lcd <action_name>
 ~~~
+
+
+---
+
+
+Description in Russian: 
+[http://wdevblog.net.ru/dnevnik/veb-razrabotka/vyivod-informaczii-na-malenkij-lcd-ekran.-arduino-pc2lcd.html](http://wdevblog.net.ru/dnevnik/veb-razrabotka/vyivod-informaczii-na-malenkij-lcd-ekran.-arduino-pc2lcd.html)
